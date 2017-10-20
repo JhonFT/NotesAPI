@@ -1,0 +1,48 @@
+en la carpeta wildfly/modules/system/layers/base/org
+crear carpeta
+    postgres
+        main
+pegar JDBC postgres .jar
+crear archivo module.xml con:
+<?xml version="1.0" ?>
+<module xmlns="urn:jboss:module:1.1" name="org.postgres">
+  <resources>
+    <resource-root path="postgresql-9.4.1207.jar"/>
+  </resources>
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="javax.transaction.api"/>
+    <module name="javax.servlet.api" optional="true"/>
+  </dependencies>
+</module>
+
+en la ruta wildfly-11.0.0.CR1\standalone\configuration
+abrir el acrhivo 
+standalone-full.xml
+
+en driver agergar
+<driver name="postgres" module="org.postgres">
+<datasource-class>org.postgresql.Driver</datasource-class>
+</driver>
+
+en datasources agregar
+<datasource jndi-name="java:jboss/datasources/NotasDS" pool-name="NotasDS" enabled="true" use-java-context="true">
+    <connection-url>jdbc:postgresql://localhost:5432/notas</connection-url>
+    <driver>postgres</driver>
+    <pool>
+        <min-pool-size>5</min-pool-size>
+        <initial-pool-size>5</initial-pool-size>
+        <max-pool-size>100</max-pool-size>
+        <prefill>true</prefill>
+    </pool>
+    <validation>
+        <valid-connection-checker
+        class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"></valid-connection-checker>
+        <exception-sorter
+        class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"></exception-sorter>
+    </validation>
+    <security>
+        <user-name>jfonseca</user-name>
+        <password>root</password>
+    </security>
+</datasource>
